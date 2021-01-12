@@ -10,7 +10,7 @@ High school x86 Assembly project - an astroids game
 ### In Game Screenshot:
 
 
-![Screenshot](/assemblyProject/Pics-Readme/screenShot.jpg?raw=true "in game screenshot")
+![Screenshot](/assemblyProject/Pics-Readme/screenShot.JPG?raw=true "in game screenshot")
 
 
 
