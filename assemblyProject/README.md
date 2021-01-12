@@ -4,13 +4,13 @@ High school x86 Assembly project - an astroids game
 ### Opening Screen:
 
 
-![Screenshot](/Pics-Readme/openScreen.bmp?raw=true "opening screen")
+![Screenshot](/assemblyProject/Pics-Readme/openScreen.bmp?raw=true "opening screen")
 
 
 ### In Game Screenshot:
 
 
-![Screenshot](/Pics-Readme/screenShot.jpg?raw=true "in game screenshot")
+![Screenshot](/assemblyProject/Pics-Readme/screenShot.jpg?raw=true "in game screenshot")
 
 
 
