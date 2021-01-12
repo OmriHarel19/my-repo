@@ -1,0 +1,8 @@
+blackjack program!
+
+when play the programs asks for our bet, it reads it from stdin into an int global var.
+incase we lose the program subtracts our betting amount from our total, so when entering a negative value our total will increase.
+the ctf prompt says they gives the flag only to millionaires so on betting we enter -1000000, and lose on purpose.
+when we press play again our amount updates and we recieve the flag:
+
+YaY_I_AM_A_MILLIONARE_LOL

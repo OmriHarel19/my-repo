@@ -1,0 +1,4 @@
+program asks for a password.
+
+we run it in gdb an find the strcmp statement -> check the address which is given as the argumgent (this is where the password is)
+and we find the flag!

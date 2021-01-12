@@ -1,0 +1,21 @@
+overwriting the GOT!
+
+scanf("%d", passcode1);
+fflush(stdin);
+
+in the scanf statement: instead of putting the scanned value into the adr of passcode1, we place it at the adr that passcode is currently holding!
+
+this value can be controled by the name we insert in the welcome function: the name can be 100 bytes long - after checking we find that the 4 last bytes of name are stored on the stack at the same place
+that passcode is allocated later on. we use this to write the adr of fflush from the GOT inside the loc of passcode -> so when scanf is called whatever we pass to it will overwrite the true address
+of fflush in the GOT. when we call fflush it will jump to the address we overwriten before.
+
+later in the login function we can find a sys call that executes: "/bin/cat flag" -> so we want to write this address in the GOT. we create our total input string and place it in a file 
+inside a dir in tmp. our string looks like this: '(1)"A"*96 + (2)"\x04\xa0\x04\x08" + (3)"134514147"'
+1) random characters - just to fill name buffer.
+2) last 4 bytes of name - the address of fflush in the GOT
+3) decimal value of the address of  "/bin/cat flag" inside login function.
+
+because the scanf that receives name accepts 100 bytes the remaining bytes "134514147" will automatically be passed to the next scanf - the scanf of passcode.
+the flag: 
+
+Sorry mom.. I got confused about scanf usage :(

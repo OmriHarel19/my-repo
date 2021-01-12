@@ -1,0 +1,7 @@
+a simple buffer overflow
+
+using gets to get input. after that the program checks if its int arg is equal to 0xcafebabe -> if it does we spawn a shell
+gets stores its input into [ebp0x2c] and we know that the function arg is located at [ebp+0x8] -> so we overflow the needed amount to write
+oxcafebabe at [ebp+0x8] - the code for the exploit is in exploit.py
+
+flag: daddy, I just pwned a buFFer :)

@@ -1,0 +1,28 @@
+format string attack: using %n with parameter accessing to overwrite a function pointer -> to point a function that spawns a shell
+
+$(python -c 'print "\x48\xd6\xff\xff" + "%34592x%2$hn"')
+
+explanation:
+1."\x48\xd6\xff\xff" - address of pointer *ptr (may change from login to login)
+2. %34592x - field width to control the number that is written by %n (in this case the number is 0x8724=34596)
+3. %2$hn - accessing the second argument, and writing a half (=short) word = 2 bytes.
+
+very similar format string attack as narnnia5->6.
+here ptr is a pointer to a function. his value is initialized to point to "goodfunction" at address 0x80486ff
+there is a second function named "hackedfunction" which spawns a shell, it is located at address 0x8048724
+we use snprintf to overwrite the value of ptr to the addr of "hackedfunction".
+like last lvl we use direct parameter accessing. this time ptr itself is located at the "1st" parameter location. buffer is located right after ptr -> so first word of buffer is "2nd" parameter.
+same as before snprintf copies the address of ptr ("\x48\xd6\xff\xff") to the beginning of buffer and then when %n reads from buffer it refers to it as a pointer so it ends up writing to the adr of ptr.
+when comparing the adrs of good and hacked we see that we only need to change the first half word (becuase we are in little endian the last half word of the adr is actualy stored first)
+for this we use "2$hn":
+- 2$ to access the seond param
+- hn to write only half word instead of a word.
+
+
+to overwrite the entire address written in ptr we can use double half word write like this:
+
+$(python -c 'print "\x3A\xd6\xff\xff\x38\xd6\xff\xff" + "%2044x%2$hn%32544x%3$hn"')
+
+*here we begin the string with the 2 adrs of the 2 half words of ptr
+*we first write to the last half word which hold the smaller value: 0x804 -> in order to make the byte count easier
+*notice that ptr's adr changed becuase our input string got larger (takes more space on stack hence pushing ptr to a lower adr)

@@ -1,0 +1,6 @@
+nc connection.
+
+using nmap to do port scanning according the port range the give us: nmap -p 1453-3501 127.0.0.1
+this scan finds only one TCP open port: 2989.
+when we nc to that port at local host we enter the string: LLLSDLaserControl (a reference to the movie TRON: legacy)
+this spawns us a level6 shell.

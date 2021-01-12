@@ -1,0 +1,10 @@
+the program takes an arg from us end runs system(argv[1]). before that is changes PATH to a directory that doesnt exist, and filters our arg
+looking for one of three substrings: sh, flag, tmp 
+
+two possible solutions:
+1. since we cant write "flag" we cat the entire directory using * : so our arg is "/bin/cat *"
+2. we go to tmp, create a new dir and there create a sim-link to flag -> then from this dir we run the progran to 
+avoid using the string "tmp" as so: /home/cmd1/cmd1 "/bin/cat <here is our link name>"
+
+flag:
+mommy now I get what PATH environment is for :)

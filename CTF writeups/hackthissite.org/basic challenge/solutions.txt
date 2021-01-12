@@ -1,0 +1,19 @@
+1. inspect html file -> password is in a comment
+2. common sense -> no password
+3. file password.php is in the current directory : just change to this url https://www.hackthissite.org/missions/basic/3/password.php
+4 + 5: change to your email address to recieve the password email
+6. the encryption method:
+every char in the input is swaped to another char following it in the ascii table according to its position in the pass:
+the first char doesnt change, the second one changes to the next char after it in the ascii table, the third char changes to the char that stands 2 places after it and so...
+7.chaning commands using ";" -> putting an input and contcatinating a "ls" command to find the name of the password file: "2020;ls"
+8. ssi inputing <!--#exec cmd="ls ../" --> to inspect the upper directory (because this is executed from /8/tmp -> find the password file name and do the same as in lvl 3
+9. same idea like lvl 8 but here there is only the password field. use the last lvl to ssi! - just change ls path to the current lvl directory <!--#exec cmd="ls /var/www/hackthissite.org/html/missions/basic/9/" -->
+10.authentication using coockies (hint was that auth is temporary and "hidden") : go to inspect ->application -> cookies -> modify the "level10_authorized" cookie from "no" to "yes" -> now any password would work.
+	can also use alert to do the modification: go to console (ctrl + shift + j) -> write 'javascript:alert(document.cookie="level10_authorized=yes");'
+11. apache hidden files:
+	1. all of the songs displayed are elton john's -> dive from current dir to e/l/t/o/n
+	2. search "apache hiding files" resaults in discovering the .htaccess file -> this file can be modified to hide specific files and dirs
+	3. access .htaccess file e/l/t/o/n/.htaccess -> in this file we find: "IndexIgnore DaAnswer.* .htaccess" -> a file named DaAnswer exists in the current dir but its hidden from us
+	4. access the file e/l/t/o/n/DaAnswer/ -> "The answer is right here! Just look a little harder." -> the answer is literaly "right here" (this password might change from time to time)
+	5. go back to original dir /missions/basic/11
+	6. as all lvls before the file index.php is where we input our password -> so go to /missions/basic/11/index.php -> there enter the password.

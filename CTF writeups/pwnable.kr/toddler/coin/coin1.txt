@@ -1,0 +1,5 @@
+the coin problem! using binary search to find the different coin out of n coins with log2(n) weighs.
+the python script should be placed inside one of the other problems servers for faster connection because of the time limitation for this challenge(60 sec)
+when we find 100 coins we get the flag:
+
+biNaRy_S34rch1nG_1s_3asy_p3asy

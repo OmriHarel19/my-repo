@@ -1,0 +1,6 @@
+upx!
+
+running strings on the file reveals that it is packed with upx compression-> use upx -d to unpack the file.
+then view in IDA and find the flag: 
+
+UPX...? sounds like a delivery service :)

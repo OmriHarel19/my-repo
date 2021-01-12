@@ -1,0 +1,2 @@
+same idea like gracker6to7, but here we get the buffer from STDIN instead of argv[1], so in order to keep STDIN open we use ";cat -" trick so that the shell 
+will not close right away.

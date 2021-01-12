@@ -1,0 +1,12 @@
+program chooses 6 random values from /dev/urandom and then uses modulu to put in the value range: 1 to 45.
+then program asks for our 6 bytes long input and compares it to the random values.
+it runs a nested loop: for each byte in the chosen lotto it compares it to every single byte of our input, for every match it incriments a counter by 1.
+if by the end of the check counter = 6 -> the flag is printed.
+so to make the counter to be equal to 6 we only need a single value in our input to match one of the 6 values randomly chosen.
+for we shall make a python script that keeps on sending the same message of 6 identical bytes (their value can be anything from 0x1 to 0x2D) to the program. becuase the random value range is pretty small 
+the chances of hitting one similar byte in the input is pretty high.
+
+we place the python script in a dir inside tmp, and create a soft link to the flag file also named "flag" (becuase the program executes: "cat flag").
+when run the script stops when the flag is returned: 
+
+sorry mom... I FORGOT to check duplicate numbers... :(

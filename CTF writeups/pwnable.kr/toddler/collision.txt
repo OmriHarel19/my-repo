@@ -1,0 +1,8 @@
+$(python -c 'print "\x7b\x42\x77\x08"*3 + "\x3d\xa1\x3b\x04" + "\x3e\xa1\x3b\x04"')
+
+the function defines the hex value: 0x21DD09EC which is its control point.
+the function expects a 20 byte long string as its arg.
+it then type casts this char array into an int array : making every four chars to represent an int (together there are 5 ints).
+it then sums up these ints and compares their value to 0x21DD09EC, if equal the flag is printed:
+
+daddy! I just managed to create a hash collision :)

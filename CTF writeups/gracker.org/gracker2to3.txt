@@ -1,0 +1,3 @@
+now we check strcmp: we see that the password is xored with the key 0x41 (A). we also see that the password we give is xored with the same key and then comparred to the xored password.
+so we take the bytes of the xored password and xor it again with the same key to find the original string -> which will be our correct password.
+the password turns out to be: h0w_is_th1s_h4ck3r_f0ll0wing_m3

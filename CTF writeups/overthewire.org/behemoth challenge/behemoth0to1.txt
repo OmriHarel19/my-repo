@@ -1,0 +1,12 @@
+the code asks for the password -> if it is correct it spawns a shell.
+
+solution: "eatmyshorts"
+1.our password (recieved by scanf) is stored at [ebp-0x5d]
+2.the correct password is stored at [ebp-0x1c] : "OK^GSYBEX^Y" 
+
+3.memfrob(void *ptr, int (size) n) is called - memfrob([ebp-0x1c], sizeof [ebp-0x1c]):
+	-this function encripts the first n bytes stored at pointer ptr (with a known xor)
+	-memfrob call changes the password to -> "eatmyshorts"
+
+4.strcmp is called compering between strings at [ebp-0x1c], [ebp-0x5d]: our string and the password
+

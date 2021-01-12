@@ -1,0 +1,25 @@
+ROP!
+
+this time the stack is not-executable so we cant use shellcode in an env var (which is located at the stack).
+solution is ROP: we overwrite the return adr with the adr of system (we find it in gdb with "p system") - this adr is not affected by aslr (the addressses of @plt are static)
+since system calls are called as follows: system(*char command) - we need to create a fake stack frame for system:
+we need to:
+1) add a fake return adr
+2) add a arg - a pointer to the command to be executed (we want "/bin/sh") 
+
+for the arg we need to have the string "/bin/sh" located somewhere in memory. we do this by setting env var SHELL=/bin/sh
+we than go to gdb and find its adr. however when we try to run we see that another unrecognized command is tried to be executed. 
+
+by looking at the env vars using "env" we see that the adr we found in gdb now points to some other env var. this is because the order and adrs of the env vars change between gdb 
+and actual run time. using the output of "env" we can find the offset of our actual string and finds its correct adr in runtime.
+
+our final python commmand looks like this; 
+
+ (python -c 'print "A"*28 + "\x60\x63\xe6\xf7" + "\x28\x84\x04\x08" + "\xb6\xde\xff\xff"'; cat -)
+
+1) "\x60\x63\xe6\xf7" - system adr.
+//here begins the fake stack frame of system
+2) "\x28\x84\x04\x08" - fake return address for system (in this case it is a adr in main but since we dont need to return anywhere because we ece a shell this value can be anything)
+3) "\xb6\xde\xff\xff" - the real adr of "/bin/sh" we found. 
+
+**) like before we use also (cat -) to keep shell from closing immediatly.

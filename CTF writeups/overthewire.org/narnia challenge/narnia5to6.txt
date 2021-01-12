@@ -1,0 +1,17 @@
+format string attack: using snprintf to write the value 500 to a local parameter i -> using %n format string (with direct parameter access)
+
+$(python -c 'print "\xd0\xd6\xff\xff" + "%496x%1$n"')
+
+"\xd0\xd6\xff\xff" -  this is the address of i on the stack: narnia5 prints it for us (this value in gdb is different from actual runtime). this adress changes from time to time
+
+%496x - reading a hexa value with field-width 496. make the byte count = 496 + 4 (i's address) = 500, which is the value we want in i/
+
+%1$n - write the number of bytes written so far (=500) to the address stored in the first parameter of snprintf.
+explanatation:
+when using direct parameter access (1$n) -> snprintf looks for the "first parameter" right before 3 other parameters near saved eip. this is because this point in memory should store the parameters that are supposed to exist for their corresponding format strings.
+the 3 params that are pushed right before saved eip when calling snprintf are (this a representation of the stack): {stack grows this way <-}: [lower address] (here is saved eip), (1)address of buffer, (2) sizeof buffer, (3) pointer to our the string to copy to buff [higher address]
+in our case, our buffer itself is where the first format argument should be (in the eyes of snprintf)!
+beacuse our string begins with the address of i ("\xd0\xd6\xff\xff")  -> snprintf begins its work by copying these 4 bytes to the beginning of buffer.
+later, when snprintf accesses its first parameter (1$n) -> it reads the value of the first word of our buffer. becase our format string is "%n", it is refering to the value it found in param 1$ as a pointer.
+now, since snprintf copied the address of i to the beginning of buffer, "%n" will treat it as a pointer to the adress of i ->so the byte count(=500) is written to i!!
+

@@ -1,0 +1,12 @@
+file descriptors!
+
+the program accepts a val from user. then it tries to read from a fd which is computed like this:
+fd = atoi(argv[1]) - 0x1234
+then, if managed to open fd, program reads 32 bytes into buf -> which then it compares to the string: "LETMEWIN\n".
+if the content of buf is equal to this string the program cats the flag file for us.
+
+solution: as we know fd = 0 is stdin (standard input) -> if we can make fd be 0 we will make program read from the stdin (and we could control the input to be the correct string).
+we go to a python cmd and find out that 0x1234 = 4660 -> so this is our arg when we run fd!
+when we run fd with this arg the program indeed is waiting for input from stdin -> if we give the right string we get the flag:
+
+"mommy! I think I know what a file descriptor is!!"

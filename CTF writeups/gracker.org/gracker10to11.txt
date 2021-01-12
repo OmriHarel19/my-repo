@@ -1,0 +1,12 @@
+SHELLCODE in env var.
+
+the program runs an infinite loop of a switch case with 4 options. the option is collected by gets into a 16 byte buffer. the switch only checks for the option in the first byte: buf[0]
+the last case nubmer 4 exits the infinite loop and makes the func return. 
+
+solution: we buffer overflow, the first byte of our string will "4" to enter option number 4, and then we use the rest of the string to overwrite the return adr.
+we overwrite it to the adr of a env we create with a nop sled of 100 nops. 
+
+the final python line looks like this: (python -c 'print "4" + "A"*27 + "\xff\xff\xff\xff"') | ./level10
+1) "4" - buf[0] selecting the wanted case.
+2) "A"*27 - overwriting the correct amount on the stack 
+3) "\xff\xff\xff\xff" - here should be the adr of the middle of the nop sled (can be found in gdb using: x/s *((char **)environ) to look for env vars)

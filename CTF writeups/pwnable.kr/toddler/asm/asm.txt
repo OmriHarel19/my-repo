@@ -1,0 +1,13 @@
+shellcode x64. in this lvl we need to use shellcode in x64 mode to get the flag.
+we can only use open()/read()/write() syscalls for this challenge.
+
+solution: we make 4 syscalls as follows:
+
+1) open(flag_path, O-RDONLY) : this syscall returns on success the fd of the file in rax. we provide the string of file name it self at the very end of our shellcode.
+2) read(flag_file_fd, *flag, 30) : we read 30 bytes from fd to the address marked by the label flag (which we put at the end of our shellcode but before the flag file name, because of how jump short works)
+3) write(1, *flag, 30) : we write up to 30 bytes from address *flag to STDOUT
+4) exit(0)
+
+for detailed explanation go to the .asm file of the shellcode itself.
+
+flag: Mak1ng_shelLcodE_i5_veRy_eaSy

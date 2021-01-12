@@ -1,0 +1,6 @@
+same idea as before: program asks for a password.
+
+this time when we run in gdb and break at main to look at the address (which the arg to strcmp) we get garbage.
+we see in the asm that there is a xor key -> which means that each char in the password is currently encrypted and during the program it will be decrypted
+by xor operation.
+we set a breake to the strcmp statement and get the password: n0b0dy_gu3sses_thi5_passw0rd

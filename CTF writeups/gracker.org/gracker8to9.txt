@@ -1,0 +1,9 @@
+format string attack.
+
+the reads the password for next level and stores it in a buffer. it then read from STDIN a string and compares it to the pass.
+however before that it executes: printf(buffer) ;(buffer is where our input is stored on the stack).
+we can use format string attack to leak data of the stack. according to the c program we can understand how the stack looks when printf is called:
+(higher adr here) [(printf stack frame), password[32], buffer[512]...] (lower adr here).
+we see that printf stack frame is created above the pass buffer, so inputing this: %x.%x.%x.%x.%x.%x.%x.%x.%x.%x.%x.%x.%x.%x.%x.%x.%x.%x.%x.%x.%x.%x.%x.%x.%x.%x.%x.%x.%x.%x.%x.%x 
+in buffer will print the actual bytes of the password. we find the password it self inside the long printing output by finding the beginning of buffer ("%x.%" is 252e7825 in hex)
+and going 32 bytes backwords -> thats where the password starts. we then look for the first nullbyte -> thats where the password ends.

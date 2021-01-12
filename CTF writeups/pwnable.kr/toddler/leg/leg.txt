@@ -1,0 +1,24 @@
+ARM! this challenge is arm assembly. 
+
+key things about ARM:
+1. r1-r15 : these are the registers.
+2. (r15) pc : program counter - contains the address of the next next instruction = 8 bytes ahead from current instruction.
+3. (r14) lr : link register - saves the return address when a function is called (similar to push eip to the stack frame).
+4. b = branch, similar to jump.
+
+ scanf("%d", &key);
+ if( (key1()+key2()+key3()) == key )
+
+the function is receiving a int  from stdin and then compares it to the sum of return values of funcs: key1,2,3.
+so we go to each of these and find out their return vals:
+
+key1 - return PC value 0x00008cdc + 8 = 0x8de4 (return via r0)
+key3 - returns LR value (the return address) = 0x00008d80. (return via r0)
+key2 - a bit less straight forward than the other funcs. returns PC value + 4 -> 0x00008d04 + 4 (2 next instructions are only 4 bytes long) + 4 = 0x8d0c.
+
+for more info go to: https://www.youtube.com/watch?v=qw8lKmkipug
+
+the sum of these value is: 0x8de4 + 0x8d80 + 0x8d0c = 108400
+when we input this to the program it gives us the flag: 
+
+My daddy has a lot of ARMv5te muscle!

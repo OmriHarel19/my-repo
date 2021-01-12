@@ -1,0 +1,123 @@
+based on the unlink vulnerability of free() macro in the dlmalloc implementation.
+--------struct OBJ-------------------------------------------------------
+
+a double linked list object with a forward and backward pointer (like a node list)
+
+typedef struct tagOBJ{
+        struct tagOBJ* fd;  //forward pointer: a pointer to another obj instance  -  4 bytes (offest: +0 bytes from the start of the of obj)
+        struct tagOBJ* bk; //backward pointer: a pointer to another obj instance -  4 bytes (offest: +4 bytes from the start of the of obj)
+        char buf[8]; 	   //char array - 8 bytes (offset: +8 bytes from the start of the of obj)
+}OBJ;
+
+
+//important functions other than main: 
+void shell(){
+        system("/bin/sh");
+}
+
+void unlink(OBJ* P){
+        OBJ* BK;
+        OBJ* FD;
+        BK=P->bk;
+        FD=P->fd;
+        FD->bk=BK;
+        BK->fd=FD;
+}
+-------------analizing main--------------------------------------------------
+//in main: 
+        OBJ* A = (OBJ*)malloc(sizeof(OBJ));
+        OBJ* B = (OBJ*)malloc(sizeof(OBJ));
+        OBJ* C = (OBJ*)malloc(sizeof(OBJ));
+
+        // double linked list: A <-> B <-> C
+        A->fd = B;
+        B->bk = A;
+        B->fd = C;
+        C->bk = B;
+
+//we malloc three obj type structs on the heap and connect them by creating a linked list.
+
+//continue in main:
+        // heap overflow!
+        gets(A->buf);
+
+        // exploit this unlink!
+        unlink(B);
+
+the exploit:
+we use the fact that gets doesnt validate string length to overwrite (B->fd, B->bk) in order to make execution jump to the function: shell()
+
+----------analizing assembly------------------------------------------------
+in gdb looking at the disassembly:
+
+when we look at the disass of main we see something strange at the end of the func:
+
+   0x080485f2 <+195>:   call   0x8048504 <unlink>
+   0x080485f7 <+200>:   add    esp,0x10
+   0x080485fa <+203>:   mov    eax,0x0
+   0x080485ff <+208>:   mov    ecx,DWORD PTR [ebp-0x4] ;ecx = the value in the address (ebp-0x4)
+   0x08048602 <+211>:   leave
+   0x08048603 <+212>:   lea    esp,[ecx-0x4] ;esp = ecx -4 
+   0x08048606 <+215>:   ret  ;ret executes "pop eip", which will cause: eip = [ecx-0x4]
+
+
+instead of using the saved eip that was pushed on the stack when main was called, main does something else:
+
+1) the value that is stored in the address: ebp-0x4 is now in ecx
+2) stack pointer esp is set to pointer the address represented by the value: ecx-4  
+3) ret pops the value from the head of the stack (esp), which now points to the address  ecx-4, to eip. 
+
+**the result is that when we exit main, execution will continue to the address: ecx-4, and the value of ecx was determened by the contents of the address ebp-0x4. 
+** so if we manage to control the value of the address ebp-0x4, we can control execution flow and make it jump to any address in memory we want.
+
+--------the exploit---------------------------------------------------
+
+idea: 
+we use gets function to overflow the heap memory of the instance B of struct OBJ. we will overwrite the values of its pointers in the linked list: B->fd, B->bk in a specific way that will cause the 
+call to unlink to write a value to stack, specifically to the vulnerable address: ebp-0x4 which affects execution flow.
+
+solution:
+
+we use gets to overwrite the heap as follows:
+OBJ A:
+we begin our A->buff with the adr of the function shell() : this value is the return address that we want to jump to from main.
+OBJ B:
+we continue to overflow the heap with random data until we arrive to the data section of B. 
+we overflow B:
+1)  B->fd = adr of (A->buff) in the heap + 4
+2) B->bk = ebp - 4
+
+explanation:
+unlink(B) performs two operations:
+
+1): 
+B->fd->bk = B->bk
+
+left side: (B->fd) ->bk is: (A->buff + 4) +4
+right side: B->bk = ebp - 4
+
+the outcome is that we write the adr [ebp-0x4] to the heap in the the adrr: (A->buff + 8): this is the unrelated outcome that unlink performs we just made so that it wont mess up our solution, the next part is the main exploit part
+
+2):
+B->bk->fd = B->fd
+
+left side: (B->bk) ->fd= (ebp - 4) +0
+right side: B->fd = (A->buff + 4)
+
+the outcome is that the address (A->buff + 4) is going to be written in the location (ebp - 4) on the stack!!
+
+-------------------------------------------------------------------------------
+result:
+
+so after we return from unlink and return to main:
+when we arrive at 208:
+
+   0x080485ff <+208>:   mov    ecx,DWORD PTR [ebp-0x4] ;;ecx = adr of (A->buff + 4)
+   0x08048602 <+211>:   leave
+   0x08048603 <+212>:   lea    esp,[ecx-0x4]	           ;;esp = ecx - 4 = (A->buff)
+   0x08048606 <+215>:   ret    			          ;; eip = [esp] = [(A->buff)] = adr of shell()
+
+so we jump into shell() which spawns us a shell!!
+we than cat the flag: 
+
+conditional_write_what_where_from_unl1nk_explo1t

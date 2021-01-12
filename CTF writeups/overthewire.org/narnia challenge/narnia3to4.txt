@@ -1,0 +1,11 @@
+overflow using a file name: 
+
+using the filename parameter given to the narnia3 exe to overflow the name of the output file from "/dev/null" to my own file - "/tmp/pass.txt"
+				
+the file name to create the overflow: "/tmp/mysoftlinktonarnia4password/tmp/pass.txt"
+
+1. "/tmp/pass.txt" - this part overflows over the 32 bites of ifile into ofile, overwriting the existing "/dev/null" -> meaning that the copy will now go to "/tmp/pass.txt"
+2."/tmp/mysoftlinktonarnia4password/tmp/pass.txt" -> because linux reads null terminated strings - this whole string will represent the path to the input file 
+3. this file will be a soft link refering to /etc/narnia_pass/narnia4 -> when running /narnia/narnia3 with the setuid it will have the permission to access this file and copy the password of the next lvl.
+
+* creating the soft link: ln -s /etc/narnia_pass/narnia4 /tmp/mysoftlinktonarnia4password/tmp/pass.txt

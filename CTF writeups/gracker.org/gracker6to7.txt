@@ -1,0 +1,11 @@
+another buffer overflow.
+
+main receives a single arg in argv[1]. it then calls a func with that string as its arg aswell. this func uses strcpy to copy this string into a 32 byte buffer.
+there is a spawn_shell func aswell, bur its not being called at any point in time. 
+
+solution:
+we use strcpy to overflow the return adr to jump to spawn_shell.
+
+1.objdump -d level6 | grep "spawn_shell" -> to get the adr of spawn shell, which is 0x 0804858
+2.we go to gdb and check the adr of the buffer, which is allocated at $ebp-0x28.
+3.we calc the len of string needed to overflow(=44) and place at the end of it the adr of spawn_shell.

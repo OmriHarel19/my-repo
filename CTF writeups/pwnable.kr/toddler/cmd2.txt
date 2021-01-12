@@ -1,0 +1,21 @@
+same as cmd1, the program takes an arg from us and runs system argv[1]. before that it changes path to a non-existing dir, erases all env vars and filters our arg looking for:
+"=", "PATH", "export", "/", "`", "flag".
+
+solution:
+we create a new dir inside tmp, and create two soft links:
+1. link to the flag file.
+2. link to /bin/cat (this is not necessary)
+
+since we cant pass "/" we cant directly execute commands so ./cat /link/to/flag wont work here.
+to get around this we use echo! inside the sh man, at the echo section we see that echo can get ascii representation in octal value like so: \0digits.
+so we use echo as follows: /home/cmd2/cmd2 "\$(echo '.\057cat coo')"
+
+explanatation:
+\057 - this the octal value in ascii table for "/"
+\$() - the "\$" tells the kernel to interperet this as a char.
+
+so the arg that system is going to get is $(echo '.\057cat coo').
+when system is run it will reference the $ sign and exec the command inside first, then use the resault as a arg for the sys call.
+so the echo will print: "./cat coo" -> this string will be passed and executed by system, which will provide us with the flag:
+
+FuN_w1th_5h3ll_v4riabl3s_haha

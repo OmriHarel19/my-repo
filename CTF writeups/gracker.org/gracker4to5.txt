@@ -1,0 +1,9 @@
+very similar challenge to behemoth2to3:
+
+the program runs system(command) insdie main. so we: 
+1. create a new dir and cd there
+2. create a file named "(the command - in this case 'uname')" and echo to it '/bin/sh' (this is what is going to be executed)
+3. remember to chmod so touch has exec preveleges: chmod +x
+4. add the path of our new dir to PATH (so that the system call will work since the kernel will be looking in our path) : PATH=newdirpath:$PATH
+5. run the program
+

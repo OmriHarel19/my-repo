@@ -1,0 +1,18 @@
+operator priority!
+
+if(fd=open("/home/mistake/password",O_RDONLY,0400) < 0):
+
+in this line the '<' operator has higher priority then "=" so what happens is:
+1. open is called -> it is run successfully so it returns a non-negative file descriptor
+2. the fd is is compared as follows : fd < 0, and since this statement is false it results in 0 (which is false).
+3. finally the value 0 is assigned to the var "fd" using '='
+
+the result is that instead of reading the password from the password file, the password is read from stdin! (fd=0)
+we than enter a password of our choise : "AAAAAAAAAA"
+
+then scanf is called to scan from stdin the varification password, every char in this password is xored with the value 1, which flipes the last bit of every char byte.
+so in our case A=0x41 -> so after xor the smallest byte is flipped resualting in 0x40 = '@'
+
+since xor is reversable (doing it twice gives the original val) we enter the password: "@@@@@@@@@@" -> which gives us the flag:
+
+Mommy, the operator priority always confuses me :(

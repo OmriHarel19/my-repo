@@ -1,0 +1,8 @@
+static random value.
+
+using rand() with no seed makes it generate the same sequence of values every time.
+after genering random the func gets a (int) key from us and does: if( (key ^ random) == 0xdeadbeef ) -> if we pass the if we get the flag
+
+using gdb we get the 'random' (which is constant) value -> we xor it with 0xdeadbeef to get the needed key. we pass the key and get the flag:
+
+Mommy, I thought libc random is unpredictable...
